@@ -12,3 +12,5 @@ to get the homepage with request to see some movie info.
 you must include some methods and frameworks, then use 'fs' method to get the data thats in the json file and then  create constructor and create instance from this constructor with the data that we read with 'fs'(you must reformat the object in the json file to js object format) and send this specifice data as a response to the user request.
 <br><br>
 ##Project Features: use the server with the front end side.
+<br><br>
+<p>Add new two routes, one to add data to the database, and one to get the data from the database and send it as a response</p>
