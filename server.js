@@ -6,6 +6,12 @@ const server = express();
 const axios = require('axios');
 const { mutateExecOptions } = require('nodemon/lib/config/load');
 require('dotenv').config();
+const pg=require('pg')
+
+const client = new pg.Client(process.env.movieDb_url)
+
+
+server.use(express.json());
 
 // the server must have address
 const PORT = 3000;
@@ -49,10 +55,12 @@ const data = JSON.parse(JsonInfo);   // now this variable containe the data from
 //     }
 //     res.status(404).send(handler404);
 // });
-
+client.connect()
+.then(()=>{
 server.listen(PORT, () =>{
    console.log(`listening on ${PORT} : I am ready`);
  });
+})
 
 // // error handling middleware
 // let handler500 = {
@@ -79,8 +87,11 @@ const Con = function(data) {
   //Routes
   server.get('/trending', trendingHandler);
   server.get('/search', searchHandler);
-  server.get('/person/:id',personHandler)
-  server.get('/company/:id',companyHandler)
+  server.get('/person/:id',personHandler);
+  server.get('/company/:id',companyHandler);
+  server.get('/moviesDB',moviesGetHandler);
+  server.post('/moviesDB',moviesAddHandler);
+
   //function handlers
   function trendingHandler(req, res) {
     const APIkey = process.env.apikey;
@@ -180,7 +191,32 @@ let cId=req.params.id;
 }
 
 
-  
+function moviesGetHandler(req,res){
+  const sql = `SELECT * FROM moviestable`;
+  client.query(sql)
+  .then((amer)=>{
+    res.send(amer.rows)
+  })
+  .catch((err)=>{
+errorHandler(err,req,res);
+  })
+
+}
+
+function moviesAddHandler(req,res){
+  const theMovie=req.body
+  const sql=`INSERT INTO moviestable (title, release_year, director,genre,rating)
+  VALUES ($1, $2, $3,$4,$5) RETURNING *;`
+  const values = [theMovie.title, theMovie.release_year, theMovie.director, theMovie.genre, theMovie.rating];
+  client.query(sql,values)
+  .then((theRes)=>{
+    res.send("the movie data was added")
+  })
+  .catch(err=>{
+    errorHandler(err,req,res)
+  })
+}
+
   function errorHandler(error, req, res) {
     const err = {
       status: 500,
