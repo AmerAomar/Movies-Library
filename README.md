@@ -14,3 +14,4 @@ you must include some methods and frameworks, then use 'fs' method to get the da
 ##Project Features: use the server with the front end side.
 <br><br>
 <p>Add new two routes, one to add data to the database, and one to get the data from the database and send it as a response</p>
+<p>add new three routes to get, update and delete data from database with path parameter</p>

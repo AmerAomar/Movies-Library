@@ -91,6 +91,9 @@ const Con = function(data) {
   server.get('/company/:id',companyHandler);
   server.get('/moviesDB',moviesGetHandler);
   server.post('/moviesDB',moviesAddHandler);
+  server.put('/UPDATE/:id',updateHandler);
+  server.delete('/DELETE/:id',deleteHandler);
+  server.get('/getMovie/:id',getMovieIdHandler);
 
   //function handlers
   function trendingHandler(req, res) {
@@ -213,6 +216,43 @@ function moviesAddHandler(req,res){
     res.send("the movie data was added")
   })
   .catch(err=>{
+    errorHandler(err,req,res)
+  })
+}
+
+function updateHandler(req,res){
+  const id =req.params.id;
+  const sql=`UPDATE moviestable SET title=$1, release_year=$2, director=$3 ,genre=$4,rating=$5 WHERE id=${id} RETURNING *`;
+  let values=[req.body.title,req.body.release_year,req.body.director,req.body.genre,req.body.rating];
+  client.query(sql,values)
+  .then((data)=>{
+res.send(data.rows)
+  })
+  .catch((err)=>{
+    errorHandler(err,req,res)
+  })
+}
+
+function deleteHandler(req,res){
+  let id=req.params.id;
+  let sql=`DELETE FROM moviestable WHERE id=${id}`;
+  client.query(sql)
+  .then((data)=>{
+    res.status(200).send("DELETED!")
+  })
+.catch((err)=>{
+  errorHandler(err,req,res)
+})
+}
+
+function getMovieIdHandler(req,res){
+  let id=req.params.id;
+  let sql=`SELECT * FROM moviestable WHERE id=${id}`
+  client.query(sql)
+  .then((data)=>{
+    res.send(data.rows[0])
+  })
+  .catch((err)=>{
     errorHandler(err,req,res)
   })
 }
