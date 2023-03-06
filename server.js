@@ -14,7 +14,7 @@ const client = new pg.Client(process.env.movieDb_url)
 server.use(express.json());
 
 // the server must have address
-const PORT = 3000;
+const PORT = process.env.PORT;
 
 // http://localhost:3000 or http://localhost:3000/
 /*const fileSystem = require('fs');     // built-in method that allow the server to read the file
@@ -38,10 +38,10 @@ const data = JSON.parse(JsonInfo);   // now this variable containe the data from
 //     res.send(movieData);             // here it will response the instance that have the specifice data
 // });
 
-// server.get('/test', (req, res) => {
-//     let string = "Hello from this route";  // here in the callBack function u can do what ever processes u want and send it as a response
-//     res.status(200).send(string);       //here i send the response after some processes
-// });
+ server.get('/', (req, res) => {
+    let string = "Welcome to the Movies server";  // here in the callBack function u can do what ever processes u want and send it as a response
+    res.status(200).send(string);       //here i send the response after some processes
+});
 
 // server.get('/favorite', (req, res) => {
 //     res.send('Welcome to Favorite Page');
