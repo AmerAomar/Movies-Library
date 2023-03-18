@@ -2,6 +2,7 @@
 
 // import the express framework
 const express = require('express');
+const cors = require('cors');
 const server = express();
 const axios = require('axios');
 const { mutateExecOptions } = require('nodemon/lib/config/load');
@@ -12,6 +13,7 @@ const client = new pg.Client(process.env.movieDb_url)
 
 
 server.use(express.json());
+server.use(cors()); // Add the cors middleware
 
 // the server must have address
 const PORT = process.env.PORT;
@@ -225,9 +227,9 @@ function updateHandler(req,res){
   const sql=`UPDATE moviestable SET title=$1, release_year=$2, director=$3 ,genre=$4,rating=$5 WHERE id=${id} RETURNING *`;
   let values=[req.body.title,req.body.release_year,req.body.director,req.body.genre,req.body.rating];
   client.query(sql,values)
-  .then((data)=>{
-res.send(data.rows)
-  })
+  // .then((data)=>{res.send(data.rows)})
+  
+  
   .catch((err)=>{
     errorHandler(err,req,res)
   })
